@@ -1,0 +1,9 @@
+1.vs2010发布webservice：点击生成-发布-发布方法选择文件系统-设置发布文件放置的路径，ok；
+2.IIS新建网站：新建网站-应用池处选择webservice所对应的aspnet的版本-物理路径选择发布文件所在的位置-传递身份验证选择特定用户-设置端口号，点击发布；
+在iis-目录浏览，点击启用；
+3.要让发布的网站给其他人访问，需要关闭主机的防火墙设置；
+4.webservice发布的bin目录需要放在网站自己的bin目录下，以此该ws才可工作；
+5.数据库连接字符串："Data Source=ewu5ap64qa.database.chinacloudapi.cn,1433;Initial Catalog=mychevywechatqa;Integrated Security=False;User ID=azureuser;Password=Yung01!@";
+以上“Data Source”代表数据库地址/服务器名字等(也可用ip地址)；”Initial Catalog“代表具体的数据库实例；”Integrated Security=False“代表使用sql server身份验证，若为True，则代表使用Windows身份验证；
+
+6.http://stat.imaxgine.net/kingdeeStatWs.asmx/RecordPv?openid=aa&page=asda

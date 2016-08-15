@@ -1,0 +1,12 @@
+C:\jiangdunchuan\imaxgine\kingdee_wangshi\src\kingdee_wangshi\kingdee_wangshi\bin\kingdee_wangshi.dll.config
+C:\jiangdunchuan\imaxgine\kingdee_wangshi\src\kingdee_wangshi\kingdee_wangshi\bin\kingdee_wangshi.dll
+C:\jiangdunchuan\imaxgine\kingdee_wangshi\src\kingdee_wangshi\kingdee_wangshi\bin\kingdee_wangshi.pdb
+C:\jiangdunchuan\imaxgine\kingdee_wangshi\src\kingdee_wangshi\kingdee_wangshi\obj\Release\kingdee_wangshi.csprojResolveAssemblyReference.cache
+C:\jiangdunchuan\imaxgine\kingdee_wangshi\src\kingdee_wangshi\kingdee_wangshi\obj\Release\kingdee_wangshi.dll
+C:\jiangdunchuan\imaxgine\kingdee_wangshi\src\kingdee_wangshi\kingdee_wangshi\obj\Release\kingdee_wangshi.pdb
+F:\projects\sites\kingdee_wangshi\src\kingdee_wangshi\kingdee_wangshi\obj\Release\kingdee_wangshi.csprojResolveAssemblyReference.cache
+F:\projects\sites\kingdee_wangshi\src\kingdee_wangshi\kingdee_wangshi\obj\Release\kingdee_wangshi.dll
+F:\projects\sites\kingdee_wangshi\src\kingdee_wangshi\kingdee_wangshi\obj\Release\kingdee_wangshi.pdb
+F:\projects\sites\kingdee_wangshi\src\kingdee_wangshi\kingdee_wangshi\bin\kingdee_wangshi.dll.config
+F:\projects\sites\kingdee_wangshi\src\kingdee_wangshi\kingdee_wangshi\bin\kingdee_wangshi.dll
+F:\projects\sites\kingdee_wangshi\src\kingdee_wangshi\kingdee_wangshi\bin\kingdee_wangshi.pdb

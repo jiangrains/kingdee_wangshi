@@ -1,0 +1,9 @@
+1.public void getjssdk(string openid)
+{"errCode":0,"ContextData":{"timestamp":"1469792719","nonceStr":"03gpz5SGefPACUM8","signature":"1B24D27EAC5417E0AF742F7EEF7873B3C445DA87","appId":"wx127e9b641dc9ff55"}}
+2.public void RecordPv(string openid, string page)
+{"errCode":0,"errInfo":null}
+3.public void RecordButtonVisit(string openid, string buttonid)
+{"errCode":0,"errInfo":null}
+4.接口地址：http://mp.imaxgine.net/kingdee_wangshi.asmx
+5.认证完成之后回调url：http://mp.imaxgine.net/kingdee_wangshi/app.html?openid={0}
+oBzWvuOioSdfGGf0T7b8adymjSFQ

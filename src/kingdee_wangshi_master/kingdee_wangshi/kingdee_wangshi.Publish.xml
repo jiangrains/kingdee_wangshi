@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<publishData>
+  <publishProfile publishUrl="C:\Users\jiangdunchuan\Desktop\imaxgine\kingdee_wangshi\publish" deleteExistingFiles="True" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="False" profileName="配置文件1" publishMethod="FileSystem" replaceMatchingFiles="False" userName="" savePWD="False" userPWD="" SelectedForPublish="True">
+    <file relUrl="bin/kingdee_wangshi.dll" publishTime="07/31/2016 14:14:43" />
+    <file relUrl="bin/kingdee_wangshi.pdb" publishTime="07/31/2016 14:14:43" />
+    <file relUrl="kingdee_wangshi.asmx" publishTime="07/29/2016 09:37:46" />
+    <file relUrl="Web.config" publishTime="07/30/2016 16:32:52" />
+  </publishProfile>
+</publishData>

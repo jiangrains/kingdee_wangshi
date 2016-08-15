@@ -1,0 +1,191 @@
+1.挂载数据盘；
+2.更新源；
+
+
+Eclipse
+1.Ctrl+Shift+G = search
+
+
+
+
+/******************************普通系统操作***************************/
+1.新建用户：useradd imaxgine -m -s /bin/bash  
+
+
+
+
+/******************************挂载数据盘***************************/
+1.查看硬盘信息：fdisk -l；
+2.对硬盘进行分区：fdisk -S 56 /dev/vdb，根据提示输入“n”，“p”，“1”，两次回车，“wq”；
+3.格式化：mkfs.ext3 /dev/vdb1；
+4.挂载：mount /mnt /dev/vdb1；
+5.修改fstab，以便系统启动时硬盘加载：echo '/dev/vdb1   /mnt ext3    defaults    0  0' >> /etc/fstab；
+
+
+
+
+
+
+/*****************************更新源********************************/
+1.执行命令：sudo apt-get update；
+
+
+
+/*****************************配置服务器*****************************/
+1.安装apache：sudo apt-get install apache2；
+2.安装apache上适配python的插件：sudo apt-get install libapache2-mod-wsgi；
+3.安装pip工具，用以在线安装django：sudo apt-get install python-pip；
+4.安装django：pip install django==1.8.5；
+5.创建django项目testSite：django-admin.py startproject testSite；
+6.在apache上连接testSite项目：sudo vi /etc/apache2/sites-available/testSite.conf，内容如下：
+<VirtualHost *:80>
+        ServerAdmin webmaster@localhost
+
+        WSGIScriptAlias / /home/projects/testSite/testSite/wsgi.py
+        <Directory /home/projects/testSite/testSite>
+        <Files wsgi.py>
+                Require all granted
+        </Files>
+        </Directory>
+</VirtualHost>
+
+7.修改项目目录下的wsgi.py文件，添加如下几行：
+from os.path import join,dirname,abspath
+  
+PROJECT_DIR = dirname(dirname(abspath(__file__)))
+import sys 
+sys.path.insert(0,PROJECT_DIR)
+
+8.在apache上启用新网站：sudo a2ensite testSite.conf
+9.删除apache默认页：rm -f /etc/apache2/sites-enabled/000-default.conf
+10.重启apache：service apache2 reload
+
+
+
+/*****************************启用apache2的HTTPS服务*********************************/
+1.安装openssl：apt-get install openssl
+2.在apache中开启ssl模块：a2enmod ssl(注意，执行这个命令后在apache2.4版本中会默认将443端口打开，因此就不需要去配置/etc/apache2/ports.conf文件了)
+3.创建证书：openssl req -x509 -newkey rsa:1024 -keyout apache.pem -out apache.pem -nodes -days 999
+(注意：在要求输入Common Name (eg, YOUR name) 时，输入你的主机名(授权主机)。)
+4.将生成的证书apache.pem放入任意目录，比如：mv apache.pem /etc/apache2/ssl/apache.pem
+5.将原有站点的配置文件thanksbody.conf拷贝一份到thanksbody-ssl.conf，修改thanksbody-ssl.conf文件，将监听端口设置为443，并指定证书的路径，如下修改：
+<VirtualHost *:443>
+	SSLEngine on
+	SSLCertificateFile    /etc/apache2/ssl/apache.pem
+6.启用该https站点：  a2ensite thanksbody-ssl.conf 
+7.重启apache：/etc/init.d/apache2 restart; service apache2 reload 
+
+
+
+/******************************安装配置mysql*****************************************/
+1.apt-get install mysql-server mysql-client；在安装的过程为root设置密码imaxgine
+2.登陆mysql：mysql -uroot -pimaxgine
+3.配置mysql，允许远程主机登陆管理：use mysql;grant all privileges on *.* to root@"%" identified by "imaxgine" with grant option;quit
+4.修改mysql配置文件，允许远程主机登陆管理：vi /etc/mysql/my.cnf,将“bind-address           = 127.0.0.1”这一行注释掉；
+5.重启mysql：ps -A | grep mysql；kill -9 所有mysql进程；/etc/init.d/mysql restart；(service mysql restart)
+6.在远程主机采用sqlyog工具远程登入。
+
+7.新建一个数据库：create database databasename;
+8.查看当前所有数据库：show databases；
+9.修改默认数据库：USE databasename；
+9.显示数据库中的所有表：show tables；(需先用USE指定数据库)
+10.删除数据库中的某个表：drop table tablename；(需先用USE指定数据库)
+
+
+
+
+/*******************************Django连接数据库**********************************/
+1.新建一个数据库：create database databasename;
+2.配置Django，使之与数据库相连接：修改settings.py文件；
+3.在python manage.py shell环境下，使用from django.db import connection；cursor = connection.cursor()；进行测试
+4.新建一个app模块：python manage.py startapp appname;
+5.在新建的app下的models.py文件中输入自己的数据表tablename(python类)；
+6.将模块安装进项目中，修改settings.py的INSTALLED_APPS，注意此处我们应该在最后面添加‘tablename’，
+7.检查语法：python manage.py validate；
+8.检查sql语句：python manage.py sqlall appname；
+9.执行sql语句：python manage.py syncdb；
+10.重启apache服务：service apache2 reload；
+11.启用Django管理页面(设置admin的导航url)；
+12.在远端访问admin页面，登陆即可。
+
+
+
+/********************************Django使用migrate同步数据库*******************************/
+1.Create migrations:python manage.py makemigrations yourapp;
+2.同步至数据库：python manage.py migrate
+3.service apache2 reload
+
+
+/*********************************配置静态资源的路径**************************************/
+1.启用django admin模块所有静态资源的路径：
+修改apache配置文件vi /etc/apache2/sites-available/testSite.conf；在其中添加以下几行：
+“        
+        Alias /static/ /usr/local/lib/python2.7/dist-packages/django/contrib/admin/static/
+        <Directory "/usr/local/lib/python2.7/dist-packages/django/contrib/admin/static/">
+                require all granted
+        </Directory>
+”
+其意思为，所有访问‘/static/’路径下的资源都将定位到‘/usr/local/lib/python2.7/dist-packages/django/contrib/admin/static/’目录。        
+
+
+/***************************************Git使用*****************************************/
+1.在本地代码的根目录中执行git init；
+2.执行git status；
+3.将想要管理的文件添加至git仓库中：git add filename；
+4.将本地修改上传：git commit -m “xxx”；
+5.git log filename:可以看到fileName相关的commit记录
+6.git log -p filename:可以显示每次提交的diff
+7.git show c5e69804bbd9725b5dece57f8cbece4a96b9f80b filename:只看某次提交中的某个文件变化，可以直接加上fileName
+8.git revert c5e69804bbd9725b5dece57f8cbece4a96b9f80b:回退某次修改
+
+
+/********************************************安装php*****************************************************/
+1.安装必要的安装包：apt-get install php5 php5-mysql libapache2-mod-php5
+2.修改apache2的配置，启用一个新的站点(比如开启8080端口，用于php的站点)
+配置文件一般如下：
+        ServerAdmin webmaster@localhost
+        DocumentRoot "/home/projects/php-test"
+        DirectoryIndex index.php
+
+        <Directory "/home/projects/php-test">
+                require all granted
+        </Directory>
+3.若是修改了php文件，需要禁用php.ini的opcache功能，然后重启apache2
+4.若是要使用phpqrcode库，则需要安装apt-get install php5-gd
+
+/*********************************************数据库建表*************************************************/
+1.多数据表时应先设计一张(或多张)主表，保存绝大部分数据，其他数据表都是依附于这张表做一些补充性质的存储；
+2.设计数据表应符合三范式；
+
+/*********************************************sublime text 3配置*************************************************/
+1.进入package control模式：ctrl + shift + p；
+2.在package control模式下，Install Package是安装插件，选择后会连网获取插件列表，disabled package 是禁用某插件，enabled package 启用插件，remove package 移除插件，list package列出插件列表；
+3.在package control模式下，disable package可以禁用Anaconda插件，避免进行过度的语法检查；
+
+
+
+
+
+
+
+
+
+
+
+
+/*********************************************jdk安装*****************************************************/
+1.安装路径不要包含空格和中文字符：JDK安装时，使用了默认路径，Program Files；中间含有空格，会导致一些脚本执行时无法找到java命令。重新安装JDK的路径不要包含空格.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
