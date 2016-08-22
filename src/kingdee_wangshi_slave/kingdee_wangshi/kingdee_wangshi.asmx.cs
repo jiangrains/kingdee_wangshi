@@ -39,7 +39,9 @@ namespace kingdee_wangshi
         string get_jsapi_ticket_url = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token={0}&type=jsapi";
         string oauth2_get_accessToken_url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid={0}&secret={1}&code={2}&grant_type=authorization_code";
         string kingdee_wangshi_entry_url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid={0}&redirect_uri=http://mp.imaxgine.net/kingdee_wangshi.asmx/wechat_oauth2_cb&response_type=code&scope=snsapi_userinfo#wechat_redirect";
+        string kingdee_wangshi_entry_url_from = "https://open.weixin.qq.com/connect/oauth2/authorize?appid={0}&redirect_uri=http://mp.imaxgine.net/kingdee_wangshi.asmx/wechat_oauth2_cb&response_type=code&scope=snsapi_userinfo&state={1}#wechat_redirect";
         string kingdee_wangshi_loading_page_url = "http://mp.imaxgine.net/kingdee_wangshi/app.html?openid={0}";
+        string kingdee_wangshi_loading_page_url_from = "http://mp.imaxgine.net/kingdee_wangshi/app.html?openid={0}&from={1}";
         string jsapi_signature = "jsapi_ticket={0}&noncestr={1}&timestamp={2}&url={3}";
         
         private WechatJsapiConfig get_jssdk_config(string url)
@@ -154,7 +156,16 @@ namespace kingdee_wangshi
         public void getjssdk(string openid)
         {
             int errCode = 0;
-            string url = string.Format(kingdee_wangshi_loading_page_url, openid);
+            string url = null;
+
+            string from = Context.Request.QueryString["from"];//null or "" or "fz" or "kol"
+
+            if (from == "fz" || from == "kol")
+                url = string.Format(kingdee_wangshi_loading_page_url_from, openid, from);
+            else
+            {
+                url = string.Format(kingdee_wangshi_loading_page_url, openid);
+            }
 
             WechatJsapiConfig ContextData = get_jssdk_config(url);
         leave:
@@ -210,7 +221,12 @@ namespace kingdee_wangshi
         {
             string url = null;
 
-            url = string.Format(kingdee_wangshi_entry_url, appId);
+            string from = Context.Request.QueryString["from"];//null or "" or "fz" or "kol"
+
+            if (from == "fz" || from == "kol")
+                url = string.Format(kingdee_wangshi_entry_url_from, appId, from);
+            else
+                url = string.Format(kingdee_wangshi_entry_url, appId);
 
             Context.Response.Redirect(url);
             Context.Response.End();
@@ -226,8 +242,10 @@ namespace kingdee_wangshi
             string oauth2AccessToken;
             string openId;
             string redirect_url;
+            SqlConnection conn = null;
 
             string code = Context.Request.QueryString["code"];
+            string state = Context.Request.QueryString["state"];  //from
 
             if (code == null)
                 return;
@@ -240,7 +258,30 @@ namespace kingdee_wangshi
             oauth2AccessToken = myTokenEntity.Access_token;
             openId = myTokenEntity.Openid;
 
-            redirect_url = string.Format(kingdee_wangshi_loading_page_url, openId);
+            if (state == "fz" || state == "kol")
+                redirect_url = string.Format(kingdee_wangshi_loading_page_url_from, openId, state);
+            else
+            {
+                redirect_url = string.Format(kingdee_wangshi_loading_page_url, openId);
+                state = "wechat_ad";
+            }
+
+            conn = DBOperation.getSqlConn();
+            string sqlStr = "select * from from_info where id=1";
+            SqlCommand from_selectCMD = new SqlCommand(sqlStr, conn);
+            SqlDataAdapter from_adapter = new SqlDataAdapter(from_selectCMD);
+            DataSet ds = new DataSet();
+            from_adapter.Fill(ds, "from_info");
+
+            DataRow newRow = ds.Tables["from_info"].NewRow();
+            newRow["openid"] = openId;
+            newRow["fromwhere"] = state;
+            newRow["visit_time"] = DateTime.Now;
+            ds.Tables["from_info"].Rows.Add(newRow);
+
+            SqlCommandBuilder share_scb = new SqlCommandBuilder(from_adapter);
+            from_adapter.Update(ds.Tables["from_info"].GetChanges());
+            DBOperation.destroySqlConn(conn);
 
             Context.Response.Redirect(redirect_url);
             Context.Response.End();

@@ -14,6 +14,14 @@ button varchar(32),
 visit_time datetime,
 )
 
+create table from_info
+(
+id int identity(1,1) primary key,
+openid varchar(32) not null,
+fromwhere varchar(32),
+visit_time datetime,
+)
+
 
 create table access_token_info
 (

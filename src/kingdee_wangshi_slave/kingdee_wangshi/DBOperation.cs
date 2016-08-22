@@ -17,7 +17,7 @@ namespace kingdee_wangshi
 {
     public class DBOperation : IDisposable
     {
-        private static String ConServerStr = @"Data Source=iZ94psqakuzZ;Initial Catalog=kingdee_wangshi;Integrated Security=False;User ID=sa;Password=23Imaxgine";
+        private static String ConServerStr = @"Data Source=127.0.0.1;Initial Catalog=kingdee_wangshi;Integrated Security=False;User ID=sa;Password=23Imaxgine";
         private static String RemoteConServerStr = @"Data Source=10.45.188.231;Initial Catalog=kingdee_wangshi;Integrated Security=False;User ID=sa;Password=23Imaxgine";
 
         //默认构造函数  
