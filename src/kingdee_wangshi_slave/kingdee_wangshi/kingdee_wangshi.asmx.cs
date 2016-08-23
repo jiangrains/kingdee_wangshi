@@ -153,22 +153,22 @@ namespace kingdee_wangshi
         */
 
         [WebMethod]
-        public void getjssdk(string openid)
+        public void getjssdk(string openid, string from)
         {
             int errCode = 0;
             string url = null;
 
-            string from = Context.Request.QueryString["from"];//null or "" or "fz" or "kol"
-
             if (from == "fz" || from == "kol")
+            {
                 url = string.Format(kingdee_wangshi_loading_page_url_from, openid, from);
+            }
             else
             {
                 url = string.Format(kingdee_wangshi_loading_page_url, openid);
             }
 
             WechatJsapiConfig ContextData = get_jssdk_config(url);
-        leave:
+            leave:
             var tmpobj = new
             {
                 errCode,
