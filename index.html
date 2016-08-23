@@ -1,0 +1,19 @@
+<script type="text/javascript">
+(function(){
+	var getUrlParam = function(name){
+		var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+		var r = window.location.search.substr(1).match(reg);
+		if (r != null) return r[2]; return null;
+	};
+
+	var from = getUrlParam("from");
+	console.log(from)
+	var href = ""
+	if (!from){
+		href = "../kingdee_wangshi.asmx/signin";
+	}else{
+		href = "../kingdee_wangshi.asmx/signin?from="+from;
+	};
+	location.href = href;
+})();
+</script>
