@@ -1,0 +1,26 @@
+<html>
+<body>
+<p id="from">from</p>
+<p id="url">url</p>
+<p id="location">url</p>
+<script type="text/javascript">
+(function(){
+	var getUrlParam = function(name){
+		var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+		var r = window.location.search.substr(1).match(reg);
+		if (r != null) return r[2]; return null;
+	};
+
+	var from = getUrlParam("from");
+	var url = getUrlParam("url");
+	document.getElementById("from").innerHTML = from
+	document.getElementById("url").innerHTML = url
+	document.getElementById("location").innerHTML = window.location
+	
+	//console.log(from)
+	//alert(from)
+	//alert(url)
+})();
+</script>
+</body>
+</html>
