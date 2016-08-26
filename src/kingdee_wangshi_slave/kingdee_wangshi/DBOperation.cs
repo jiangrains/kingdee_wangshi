@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -19,6 +19,11 @@ namespace kingdee_wangshi
     {
         private static String ConServerStr = @"Data Source=127.0.0.1;Initial Catalog=kingdee_wangshi;Integrated Security=False;User ID=sa;Password=23Imaxgine";
         private static String RemoteConServerStr = @"Data Source=10.45.188.231;Initial Catalog=kingdee_wangshi;Integrated Security=False;User ID=sa;Password=23Imaxgine";
+
+        static int access_token_expires = 3600; //one hour.
+        static int jsapi_ticket_expires = 3600; //one hour.
+        static int access_token_table = 0;
+        static int jsapi_ticket_table = 1;
 
         //默认构造函数  
         public DBOperation()
@@ -60,7 +65,7 @@ namespace kingdee_wangshi
             }
         }
 
-        /*public static void set_local_token_ticket(int table, string token_or_ticket, int expires_in)
+        public static void set_local_token_ticket_slave(int table, string token_or_ticket, int expires_in, DateTime refresh)
         {
             string table_str = null;
             string key_str = null;
@@ -88,7 +93,7 @@ namespace kingdee_wangshi
             DataRow newRow = ds.Tables[table_str].NewRow();
             newRow[key_str] = token_or_ticket;
             newRow["expires_in"] = expires_in;
-            newRow["refresh_time"] = DateTime.Now;
+            newRow["refresh_time"] = refresh;
             ds.Tables[table_str].Rows.Add(newRow);
 
             SqlCommandBuilder scb = new SqlCommandBuilder(adapter);
@@ -96,36 +101,7 @@ namespace kingdee_wangshi
 
             DBOperation.destroySqlConn(conn);
             return;
-        }*/
-
-        /*public static AccessTokenEntiny get_local_token_entiny()
-        {
-            AccessTokenEntiny entiny = null;
-            string token = null;
-
-            SqlConnection conn = null;
-            conn = DBOperation.getSqlConn();
-
-            string sqlStr = "select top 1 * from access_token_info order by id desc";
-            SqlCommand selectCMD = new SqlCommand(sqlStr, conn);
-            SqlDataAdapter adapter = new SqlDataAdapter(selectCMD);
-            DataSet ds = new DataSet();
-            adapter.Fill(ds, "access_token_info");
-
-            if (ds.Tables["access_token_info"].Rows.Count == 0)
-                goto leave;
-            else
-            {
-                entiny = new AccessTokenEntiny();
-                entiny.access_token = ds.Tables["access_token_info"].Rows[0]["access_token"].ToString();
-                entiny.expires_in = Convert.ToInt32(ds.Tables["access_token_info"].Rows[0]["expires_in"]);
-                entiny.refresh_time = (DateTime)ds.Tables["access_token_info"].Rows[0]["refresh_time"];
-            }
-
-        leave:
-            DBOperation.destroySqlConn(conn);
-            return entiny;
-        }*/
+        }
 
         public static AccessTokenEntiny get_remote_token_entiny()
         {
@@ -156,34 +132,59 @@ namespace kingdee_wangshi
             return entiny;
         }
 
-        /*public static JsapiTicketEntiny get_local_ticket_entiny()
+        public static AccessTokenEntiny get_local_token_entiny_slave()
         {
-            JsapiTicketEntiny entiny = null;
-            string ticket = null;
+            AccessTokenEntiny entiny = null;
+            string token = null;
+            int delta = 0;
 
             SqlConnection conn = null;
             conn = DBOperation.getSqlConn();
 
-            string sqlStr = "select top 1 * from jsapi_ticket_info order by id desc";
+            string sqlStr = "select top 1 * from access_token_info order by id desc";
             SqlCommand selectCMD = new SqlCommand(sqlStr, conn);
             SqlDataAdapter adapter = new SqlDataAdapter(selectCMD);
             DataSet ds = new DataSet();
-            adapter.Fill(ds, "jsapi_ticket_info");
+            adapter.Fill(ds, "access_token_info");
 
-            if (ds.Tables["jsapi_ticket_info"].Rows.Count == 0)
-                goto leave;
+            if (ds.Tables["access_token_info"].Rows.Count == 0)
+            {
+                entiny = get_remote_token_entiny();
+                if (entiny == null)
+                    goto leave;
+                delta = utils.get_delta_second(entiny.refresh_time);
+                if (delta < access_token_expires)
+                {
+                    set_local_token_ticket_slave(access_token_table, entiny.access_token, entiny.expires_in, entiny.refresh_time);
+                }
+            }
             else
             {
-                entiny = new JsapiTicketEntiny();
-                entiny.jsapi_ticket = ds.Tables["jsapi_ticket_info"].Rows[0]["jsapi_ticket"].ToString();
-                entiny.expires_in = Convert.ToInt32(ds.Tables["jsapi_ticket_info"].Rows[0]["expires_in"]);
-                entiny.refresh_time = (DateTime)ds.Tables["jsapi_ticket_info"].Rows[0]["refresh_time"];
+                entiny = new AccessTokenEntiny();
+                entiny.access_token = ds.Tables["access_token_info"].Rows[0]["access_token"].ToString();
+                entiny.expires_in = Convert.ToInt32(ds.Tables["access_token_info"].Rows[0]["expires_in"]);
+                entiny.refresh_time = (DateTime)ds.Tables["access_token_info"].Rows[0]["refresh_time"];
+
+                delta = utils.get_delta_second(entiny.refresh_time);
+                if (delta >= access_token_expires)
+                {
+                    entiny = get_remote_token_entiny();
+                    if (entiny == null)
+                        goto leave;
+                    delta = utils.get_delta_second(entiny.refresh_time);
+                    if (delta < access_token_expires)
+                    {
+                        set_local_token_ticket_slave(access_token_table, entiny.access_token, entiny.expires_in, entiny.refresh_time);
+                    }
+                }
             }
 
-        leave:
+            leave:
             DBOperation.destroySqlConn(conn);
             return entiny;
-        }*/
+        }
+
+
 
         public static JsapiTicketEntiny get_remote_ticket_entiny()
         {
@@ -207,6 +208,58 @@ namespace kingdee_wangshi
                 entiny.jsapi_ticket = ds.Tables["jsapi_ticket_info"].Rows[0]["jsapi_ticket"].ToString();
                 entiny.expires_in = Convert.ToInt32(ds.Tables["jsapi_ticket_info"].Rows[0]["expires_in"]);
                 entiny.refresh_time = (DateTime)ds.Tables["jsapi_ticket_info"].Rows[0]["refresh_time"];
+            }
+
+            leave:
+            DBOperation.destroySqlConn(conn);
+            return entiny;
+        }
+
+        public static JsapiTicketEntiny get_local_ticket_entiny_slave()
+        {
+            JsapiTicketEntiny entiny = null;
+            string ticket = null;
+            int delta = 0;
+
+            SqlConnection conn = null;
+            conn = DBOperation.getSqlConn();
+
+            string sqlStr = "select top 1 * from jsapi_ticket_info order by id desc";
+            SqlCommand selectCMD = new SqlCommand(sqlStr, conn);
+            SqlDataAdapter adapter = new SqlDataAdapter(selectCMD);
+            DataSet ds = new DataSet();
+            adapter.Fill(ds, "jsapi_ticket_info");
+
+            if (ds.Tables["jsapi_ticket_info"].Rows.Count == 0)
+            {
+                entiny = get_remote_ticket_entiny();
+                if (entiny == null)
+                    goto leave;
+                delta = utils.get_delta_second(entiny.refresh_time);
+                if (delta < jsapi_ticket_expires)
+                {
+                    set_local_token_ticket_slave(jsapi_ticket_table, entiny.jsapi_ticket, entiny.expires_in, entiny.refresh_time);
+                }
+            }
+            else
+            {
+                entiny = new JsapiTicketEntiny();
+                entiny.jsapi_ticket = ds.Tables["jsapi_ticket_info"].Rows[0]["jsapi_ticket"].ToString();
+                entiny.expires_in = Convert.ToInt32(ds.Tables["jsapi_ticket_info"].Rows[0]["expires_in"]);
+                entiny.refresh_time = (DateTime)ds.Tables["jsapi_ticket_info"].Rows[0]["refresh_time"];
+
+                delta = utils.get_delta_second(entiny.refresh_time);
+                if (delta >= jsapi_ticket_expires)
+                {
+                    entiny = get_remote_ticket_entiny();
+                    if (entiny == null)
+                        goto leave;
+                    delta = utils.get_delta_second(entiny.refresh_time);
+                    if (delta < jsapi_ticket_expires)
+                    {
+                        set_local_token_ticket_slave(jsapi_ticket_table, entiny.jsapi_ticket, entiny.expires_in, entiny.refresh_time);
+                    }
+                }
             }
 
             leave:
