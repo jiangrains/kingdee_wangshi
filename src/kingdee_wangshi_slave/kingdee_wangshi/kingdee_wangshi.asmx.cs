@@ -1,4 +1,4 @@
-﻿#define DEBUG_WECHAT
+#define DEBUG_WECHAT
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,9 +49,7 @@ namespace kingdee_wangshi
             JsapiTicketEntiny jsapi_ticket = null;
             WechatJsapiConfig config = null;
 
-            /*if ((jsapi_ticket = DBOperation.get_local_ticket_entiny()) == null)
-                goto leave;*/
-            if ((jsapi_ticket = DBOperation.get_remote_ticket_entiny()) == null)
+            if ((jsapi_ticket = DBOperation.get_local_ticket_entiny_slave()) == null)
                 goto leave;
 
             config = new WechatJsapiConfig();
@@ -159,16 +157,14 @@ namespace kingdee_wangshi
             string url = null;
 
             if (from == "fz" || from == "kol")
-            {
                 url = string.Format(kingdee_wangshi_loading_page_url_from, openid, from);
-            }
             else
             {
                 url = string.Format(kingdee_wangshi_loading_page_url, openid);
             }
 
             WechatJsapiConfig ContextData = get_jssdk_config(url);
-            leave:
+        leave:
             var tmpobj = new
             {
                 errCode,
