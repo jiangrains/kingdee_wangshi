@@ -80,23 +80,23 @@ def set_record_lastid(sql_address_value, page_visit_lastid, button_visit_lastid,
     mysql_cur.execute("select * from record_info where sql_address=%s and table_name='page_vist_info'", (sql_address_value))
     rows = mysql_cur.fetchall()
     if mysql_cur.rowcount == 0:
-        mysql_cur.execute("insert into record_info values(%s, %s, %s, %s)", (sql_address_value, "page_visit_info", page_visit_lastid, refresh_time))
+        mysql_cur.execute("insert into record_info (sql_address, table_name, last_id, refresh_time) values (%s, %s, %s, %s)", (sql_address_value, "page_visit_info", page_visit_lastid, refresh_time))
     elif mysql_cur.rowcount == 1:
-        mysql_cur.execute("update record_info set last_id=%d, refresh_time=%s where sql_address=%s and table_name='page_vist_info'", (page_visit_lastid, refresh_time, sql_address_value))
+        mysql_cur.execute("update record_info set last_id=%s, refresh_time=%s where sql_address=%s and table_name='page_vist_info'", (page_visit_lastid, refresh_time, sql_address_value))
 
     mysql_cur.execute("select * from record_info where sql_address=%s and table_name='button_vist_info'", (sql_address_value))
     rows = mysql_cur.fetchall()
     if mysql_cur.rowcount == 0:
-        mysql_cur.execute("insert into record_info values(%s, %s, %s, %s)", (sql_address_value, "button_visit_info", button_visit_lastid, refresh_time))
+        mysql_cur.execute("insert into record_info (sql_address, table_name, last_id, refresh_time) values(%s, %s, %s, %s)", (sql_address_value, "button_visit_info", button_visit_lastid, refresh_time))
     elif mysql_cur.rowcount == 1:
-        mysql_cur.execute("update record_info set last_id=%d, refresh_time=%s where sql_address=%s and table_name='button_vist_info'", (button_visit_lastid, refresh_time, sql_address_value))
+        mysql_cur.execute("update record_info set last_id=%s, refresh_time=%s where sql_address=%s and table_name='button_vist_info'", (button_visit_lastid, refresh_time, sql_address_value))
 
     mysql_cur.execute("select * from record_info where sql_address=%s and table_name='from_info'", (sql_address_value))
     rows = mysql_cur.fetchall()
     if mysql_cur.rowcount == 0:
-        mysql_cur.execute("insert into record_info values(%s, %s, %s, %s)", (sql_address_value, "from_info", from_info_lastid, refresh_time))
+        mysql_cur.execute("insert into record_info (sql_address, table_name, last_id, refresh_time) values(%s, %s, %s, %s)", (sql_address_value, "from_info", from_info_lastid, refresh_time))
     elif mysql_cur.rowcount == 1:
-        mysql_cur.execute("update record_info set last_id=%d, refresh_time=%s where sql_address=%s and table_name='from_info'", (from_info_lastid, refresh_time, sql_address_value))
+        mysql_cur.execute("update record_info set last_id=%s, refresh_time=%s where sql_address=%s and table_name='from_info'", (from_info_lastid, refresh_time, sql_address_value))
 
     mysql_conn.commit()
 
