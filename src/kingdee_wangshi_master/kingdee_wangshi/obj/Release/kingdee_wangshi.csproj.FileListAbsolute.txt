@@ -10,3 +10,9 @@ F:\projects\sites\kingdee_wangshi\src\kingdee_wangshi\kingdee_wangshi\obj\Releas
 F:\projects\sites\kingdee_wangshi\src\kingdee_wangshi\kingdee_wangshi\bin\kingdee_wangshi.dll.config
 F:\projects\sites\kingdee_wangshi\src\kingdee_wangshi\kingdee_wangshi\bin\kingdee_wangshi.dll
 F:\projects\sites\kingdee_wangshi\src\kingdee_wangshi\kingdee_wangshi\bin\kingdee_wangshi.pdb
+F:\projects\sites\kingdee_wangshi\src\kingdee_wangshi_master\kingdee_wangshi\bin\kingdee_wangshi.dll.config
+F:\projects\sites\kingdee_wangshi\src\kingdee_wangshi_master\kingdee_wangshi\bin\kingdee_wangshi.dll
+F:\projects\sites\kingdee_wangshi\src\kingdee_wangshi_master\kingdee_wangshi\bin\kingdee_wangshi.pdb
+F:\projects\sites\kingdee_wangshi\src\kingdee_wangshi_master\kingdee_wangshi\obj\Release\kingdee_wangshi.csprojResolveAssemblyReference.cache
+F:\projects\sites\kingdee_wangshi\src\kingdee_wangshi_master\kingdee_wangshi\obj\Release\kingdee_wangshi.dll
+F:\projects\sites\kingdee_wangshi\src\kingdee_wangshi_master\kingdee_wangshi\obj\Release\kingdee_wangshi.pdb

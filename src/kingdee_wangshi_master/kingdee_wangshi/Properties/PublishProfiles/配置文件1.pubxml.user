@@ -10,7 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <File Include="bin/kingdee_wangshi.dll">
-      <publishTime>08/15/2016 14:25:44</publishTime>
+      <publishTime>09/14/2016 20:12:51</publishTime>
     </File>
     <File Include="bin/MySql.Data.dll">
       <publishTime>06/17/2016 18:28:04</publishTime>
@@ -22,7 +22,7 @@
       <publishTime>07/29/2016 09:37:46</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>08/15/2016 01:40:47</publishTime>
+      <publishTime>08/27/2016 21:50:01</publishTime>
     </File>
   </ItemGroup>
 </Project>

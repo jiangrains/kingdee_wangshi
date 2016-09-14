@@ -1,21 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using System.Text;
+using System.Threading.Tasks;
 
-using System.Web.Script.Services;
 using System.Data.SqlClient;
 using System.Data;
-using System.Web.Script.Serialization;
 using System.Net;
 using System.Text;
-using System.Web.Security;
 
-using System.Configuration;
-
-namespace kingdee_wangshi
+namespace WindowsService1
 {
-    public class DBOperation : IDisposable
+    class DBOperation
     {
         private static String ConServerStr = @"Data Source=iZ941e15yquZ;Initial Catalog=kingdee_wangshi;Integrated Security=False;User ID=sa;Password=23Imaxgine";
 
@@ -156,7 +152,7 @@ namespace kingdee_wangshi
                 entiny.refresh_time = (DateTime)ds.Tables["access_token_info"].Rows[0]["refresh_time"];
             }
 
-        leave:
+            leave:
             DBOperation.destroySqlConn(conn);
             return entiny;
         }
@@ -185,7 +181,7 @@ namespace kingdee_wangshi
                 entiny.refresh_time = (DateTime)ds.Tables["jsapi_ticket_info"].Rows[0]["refresh_time"];
             }
 
-        leave:
+            leave:
             DBOperation.destroySqlConn(conn);
             return entiny;
         }

@@ -1,6 +1,7 @@
 create table page_visit_info
 (
 id int AUTO_INCREMENT primary key,
+old_id int,
 openid varchar(32) not null,
 page varchar(32),
 visit_time datetime
@@ -9,9 +10,28 @@ visit_time datetime
 create table button_visit_info
 (
 id int AUTO_INCREMENT primary key,
+old_id int,
 openid varchar(32) not null,
 button varchar(32),
 visit_time datetime
+)
+
+create table from_info
+(
+id int AUTO_INCREMENT primary key,
+old_id int,
+openid varchar(32) not null,
+fromwhere varchar(32),
+visit_time datetime
+)
+
+create table record_info
+(
+id int AUTO_INCREMENT primary key,
+sql_address varchar(32) not null,
+table_name varchar(32) not null,
+last_id int,
+refresh_time datetime
 )
 
 create table access_token_info

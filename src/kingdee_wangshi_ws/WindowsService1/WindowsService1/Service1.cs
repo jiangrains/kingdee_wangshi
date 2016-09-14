@@ -1,21 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Security;
-using System.Web.SessionState;
-
-using System.Web.Script.Services;
-using System.Data.SqlClient;
+using System.ComponentModel;
 using System.Data;
-using System.Web.Script.Serialization;
+using System.Diagnostics;
+using System.Linq;
+using System.ServiceProcess;
+using System.Text;
+using System.Threading.Tasks;
+
 using System.Net;
 using System.Text;
-using System.Web.Security;
+using System.Data;
+using System.Web.Script.Serialization;
 
-namespace kingdee_wangshi
+namespace WindowsService1
 {
-    public class Global : System.Web.HttpApplication
+    public partial class tokenTimer : ServiceBase
     {
         string appId = "wxd73b44e3381aa8fd";
         string appSecret = "88ac9fe5320f96b69383a246b70dd1a6";
@@ -31,34 +31,6 @@ namespace kingdee_wangshi
         static int access_token_expires = 3600; //one hour.
         static int jsapi_ticket_expires = 3600; //one hour.
 
-        void tokenTimer_elapsed(object sender, EventArgs e)
-        {
-            string token = null;
-            string expires = null;
-
-            AccessTokenEntiny entiny = DBOperation.get_local_token_entiny();
-            if (entiny == null)
-                return;
-            else
-            {
-                int delta = utils.get_delta_second(entiny.refresh_time);
-                if (delta < access_token_expires)
-                    return;
-            }
-
-            WeChatAccessTokenEntity myTokenEntity;
-            JavaScriptSerializer jss = new JavaScriptSerializer();
-
-            string accessTokenUrl = string.Format(get_accessToken_url, appId, appSecret);
-            string accessTokenStr = utils.load_data_from_url(accessTokenUrl, false, null);
-            myTokenEntity = jss.Deserialize<WeChatAccessTokenEntity>(accessTokenStr);
-            token = myTokenEntity.Access_token;
-            expires = myTokenEntity.Expires_in;
-
-            DBOperation.set_local_token_ticket(access_token_table, token, Convert.ToInt32(expires));
-
-            return;
-        }
 
         void tokenTimer_callback(object data)
         {
@@ -89,50 +61,11 @@ namespace kingdee_wangshi
             return;
         }
 
-        void ticketTimer_elapsed(object sender, EventArgs e)
-        {
-            string ticket = null;
-            string expires = null;
-            AccessTokenEntiny access_token = null;
-
-            JsapiTicketEntiny entiny = DBOperation.get_local_ticket_entiny();
-            if (entiny == null)
-            {
-                DBOperation.timer_debug_set_refresh(0);
-                return;
-            }
-            else
-            {
-                int delta = utils.get_delta_second(entiny.refresh_time);
-                DBOperation.timer_debug_set_refresh(delta);
-                if (delta < jsapi_ticket_expires)
-                    return;
-            }
-
-            WeChatJsapiTicketEntity myJsapiTokenEntity;
-            JavaScriptSerializer jss = new JavaScriptSerializer();
-
-            access_token = DBOperation.get_local_token_entiny();
-            if (access_token == null)
-                return;
-            string jsapiTicketUrl = string.Format(get_jsapi_ticket_url, access_token.access_token);
-            string jsapiTicketStr = utils.load_data_from_url(jsapiTicketUrl, false, null);
-            myJsapiTokenEntity = jss.Deserialize<WeChatJsapiTicketEntity>(jsapiTicketStr);
-            ticket = myJsapiTokenEntity.ticket;
-            expires = myJsapiTokenEntity.expires_in;
-
-            DBOperation.set_local_token_ticket(jsapi_ticket_table, ticket, Convert.ToInt32(expires));
-
-            return;
-        }
-
         void ticketTimer_callback(object data)
         {
             string ticket = null;
             string expires = null;
             AccessTokenEntiny access_token = null;
-
-
 
             JsapiTicketEntiny entiny = DBOperation.get_local_ticket_entiny();
             if (entiny == null)
@@ -171,10 +104,13 @@ namespace kingdee_wangshi
             ticketTimer_callback(data);
         }
 
-        protected void Application_Start(object sender, EventArgs e)
+        public tokenTimer()
         {
-#if USE_TIMER
-            //System.Diagnostics.Debug.WriteLine("Hello world.");
+            InitializeComponent();
+        }
+
+        protected override void OnStart(string[] args)
+        {
             string token = null;
             string ticket = null;
             string expires = null;
@@ -211,40 +147,11 @@ namespace kingdee_wangshi
             //ticketTimer.Elapsed += new System.Timers.ElapsedEventHandler(ticketTimer_elapsed);
 
             DBOperation.set_event("Application_Start");
-#endif
-            return;
         }
 
-        protected void Session_Start(object sender, EventArgs e)
+        protected override void OnStop()
         {
-
-        }
-
-        protected void Application_BeginRequest(object sender, EventArgs e)
-        {
-
-        }
-
-        protected void Application_AuthenticateRequest(object sender, EventArgs e)
-        {
-
-        }
-
-        protected void Application_Error(object sender, EventArgs e)
-        {
-
-        }
-
-        protected void Session_End(object sender, EventArgs e)
-        {
-
-        }
-
-        protected void Application_End(object sender, EventArgs e)
-        {
-#if USE_TIMER
             DBOperation.set_event("Application_End");
-#endif
         }
     }
 }

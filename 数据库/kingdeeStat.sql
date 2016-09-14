@@ -38,3 +38,17 @@ jsapi_ticket varchar(1024) not null,
 expires_in int,
 refresh_time datetime,
 )
+
+create table timer_debug_info
+(
+id int identity(1,1) primary key,
+refresh_time datetime,
+delta int,
+)
+
+create table event_info
+(
+id int identity(1,1) primary key,
+event varchar(32) not null,
+refresh_time datetime,
+)
