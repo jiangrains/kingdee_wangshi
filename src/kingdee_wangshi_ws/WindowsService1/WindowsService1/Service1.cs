@@ -31,6 +31,8 @@ namespace WindowsService1
         static int access_token_expires = 3600; //one hour.
         static int jsapi_ticket_expires = 3600; //one hour.
 
+        private System.Threading.Timer Thread_Time;
+
 
         void tokenTimer_callback(object data)
         {
@@ -138,7 +140,7 @@ namespace WindowsService1
             //tokenTimer.AutoReset = true;
             //tokenTimer.Elapsed += new System.Timers.ElapsedEventHandler(tokenTimer_elapsed);
 
-            System.Threading.Timer Thread_Time = new System.Threading.Timer(Thread_Timer_callback, null, 0, timer_expires);
+            Thread_Time = new System.Threading.Timer(Thread_Timer_callback, null, 0, timer_expires);
 
             //System.Timers.Timer ticketTimer = new System.Timers.Timer(jsapi_ticket_timer_expires);
             //ticketTimer.Interval = jsapi_ticket_timer_expires;
