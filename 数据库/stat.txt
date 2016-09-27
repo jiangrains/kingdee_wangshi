@@ -1,5 +1,6 @@
 select count(distinct openid) as from_info_count from from_info;
 select count(id) as page_visit_count from page_visit_info;
+select count(id) as index_page_visit from button_visit_info where button = "index";
 
 select count(distinct openid) as from_wechat from from_info where fromwhere = "wechat_ad";
 select count(distinct openid) as from_kol from from_info where fromwhere = "kol";
