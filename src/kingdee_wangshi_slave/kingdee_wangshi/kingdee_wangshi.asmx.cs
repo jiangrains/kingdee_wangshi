@@ -65,6 +65,60 @@ namespace kingdee_wangshi
             return config;
         }
 
+        public void RecordPvInner(string openid, string page)
+        {
+            int errCode = 0;
+            string errInfo = null;
+            SqlConnection conn = null;
+
+            conn = DBOperation.getSqlConn();
+
+            string sqlStr = "select * from page_visit_info where id=1";
+            SqlCommand visit_selectCMD = new SqlCommand(sqlStr, conn);
+            SqlDataAdapter visit_adapter = new SqlDataAdapter(visit_selectCMD);
+            DataSet ds = new DataSet();
+            visit_adapter.Fill(ds, "page_visit_info");
+
+            DataRow newRow = ds.Tables["page_visit_info"].NewRow();
+            newRow["openid"] = openid;
+            newRow["page"] = page;
+            newRow["visit_time"] = DateTime.Now;
+            ds.Tables["page_visit_info"].Rows.Add(newRow);
+
+            SqlCommandBuilder share_scb = new SqlCommandBuilder(visit_adapter);
+            visit_adapter.Update(ds.Tables["page_visit_info"].GetChanges());
+            leave:
+            DBOperation.destroySqlConn(conn);
+            return;
+        }
+
+        public void RecordButtonVisitInner(string openid, string buttonid)
+        {
+            int errCode = 0;
+            string errInfo = null;
+            SqlConnection conn = null;
+
+            conn = DBOperation.getSqlConn();
+
+            string sqlStr = "select * from button_visit_info where id=1";
+            SqlCommand visit_selectCMD = new SqlCommand(sqlStr, conn);
+            SqlDataAdapter visit_adapter = new SqlDataAdapter(visit_selectCMD);
+            DataSet ds = new DataSet();
+            visit_adapter.Fill(ds, "button_visit_info");
+
+            DataRow newRow = ds.Tables["button_visit_info"].NewRow();
+            newRow["openid"] = openid;
+            newRow["button"] = buttonid;
+            newRow["visit_time"] = DateTime.Now;
+            ds.Tables["button_visit_info"].Rows.Add(newRow);
+
+            SqlCommandBuilder share_scb = new SqlCommandBuilder(visit_adapter);
+            visit_adapter.Update(ds.Tables["button_visit_info"].GetChanges());
+            leave:
+            DBOperation.destroySqlConn(conn);
+            return;
+        }
+
         /*
         [WebMethod]
         public void tokenTimer()
@@ -216,6 +270,8 @@ namespace kingdee_wangshi
         public void signin()
         {
             string url = null;
+
+            RecordButtonVisitInner("0000000", "index");
 
             string from = Context.Request.QueryString["from"];//null or "" or "fz" or "kol"
 
