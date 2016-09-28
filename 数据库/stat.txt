@@ -1,3 +1,4 @@
+
 select count(distinct openid) as from_info_count from from_info;
 select count(id) as page_visit_count from page_visit_info;
 select count(id) as index_page_visit from button_visit_info where button = "index";
@@ -19,3 +20,27 @@ select count(id) as efficient_yes from button_visit_info where button = "efficie
 select count(id) as efficient_no from button_visit_info where button = "efficient-no";
 select count(id) as innovate_yes from button_visit_info where button = "innovate-yes";
 select count(id) as innovate_no from button_visit_info where button = "innovate-no";
+
+
+-------------------------------------------------------------------------------------------------------
+select count(distinct openid) as from_info_count from from_info where TO_DAYS(NOW())-TO_DAYS(visit_time)>=1;
+select count(id) as page_visit_count from page_visit_info where TO_DAYS(NOW())-TO_DAYS(visit_time)>=1;
+select count(id) as index_page_visit from button_visit_info where button = "index" and TO_DAYS(NOW())-TO_DAYS(visit_time)>=1;
+
+select count(distinct openid) as from_wechat from from_info where fromwhere = "wechat_ad" and TO_DAYS(NOW())-TO_DAYS(visit_time)>=1;
+select count(distinct openid) as from_kol from from_info where fromwhere = "kol" and TO_DAYS(NOW())-TO_DAYS(visit_time)>=1;
+select count(distinct openid) as from_fz from from_info where fromwhere = "fz" and TO_DAYS(NOW())-TO_DAYS(visit_time)>=1;
+
+select count(id) as knock from button_visit_info where button = "knock" and TO_DAYS(NOW())-TO_DAYS(visit_time)>=1;
+select count(id) as ready from button_visit_info where button = "ready" and TO_DAYS(NOW())-TO_DAYS(visit_time)>=1;
+select count(id) as enter from button_visit_info where button = "enter" and TO_DAYS(NOW())-TO_DAYS(visit_time)>=1;
+select count(id) as finish from button_visit_info where button = "finish" and TO_DAYS(NOW())-TO_DAYS(visit_time)>=1;
+select count(id) as download from button_visit_info where button = "download" and TO_DAYS(NOW())-TO_DAYS(visit_time)>=1;
+select count(id) as video from button_visit_info where button = "video" and TO_DAYS(NOW())-TO_DAYS(visit_time)>=1;
+select count(id) as share from button_visit_info where button = "share" and TO_DAYS(NOW())-TO_DAYS(visit_time)>=1;
+select count(id) as commu_yes from button_visit_info where button = "communicate-yes" and TO_DAYS(NOW())-TO_DAYS(visit_time)>=1;
+select count(id) as commu_no from button_visit_info where button = "communicate-no" and TO_DAYS(NOW())-TO_DAYS(visit_time)>=1;
+select count(id) as efficient_yes from button_visit_info where button = "efficient-yes" and TO_DAYS(NOW())-TO_DAYS(visit_time)>=1;
+select count(id) as efficient_no from button_visit_info where button = "efficient-no" and TO_DAYS(NOW())-TO_DAYS(visit_time)>=1;
+select count(id) as innovate_yes from button_visit_info where button = "innovate-yes" and TO_DAYS(NOW())-TO_DAYS(visit_time)>=1;
+select count(id) as innovate_no from button_visit_info where button = "innovate-no" and TO_DAYS(NOW())-TO_DAYS(visit_time)>=1;
